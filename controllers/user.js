@@ -42,41 +42,35 @@ const login = async (req, res) => {
         //find the user from db
         const foundUser = await userModel.findOne({ email })
 
-        //check if user exists
-        if (!foundUser) return res.status(401).send({ success: false, message: "invaild email and password" })
+        //check if user exists and checking password
+        if (!foundUser || !(await bcrypt.compare(password, foundUser.password))) return res.status(401).send({ success: false, message: "invaild email and password" })
 
-        //checking password
-        const passwordMatch = await bcrypt.compare(password, foundUser.password)
+        if (foundUser?.isBlocked) return res.status(401).send({ success: false, message: "You are blocked." });
 
-        if (passwordMatch) {
-            const accessToken = jwt.sign(
-                {
-                    "userInfo": {
-                        "email": foundUser?.email,
-                    },
+        const accessToken = jwt.sign(
+            {
+                "userInfo": {
+                    "email": foundUser?.email,
                 },
-                process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: "1m" }
-            )
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: "1m" }
+        )
 
-            const refreshToken = jwt.sign(
-                { email: foundUser.email },
-                process.env.REFRESH_TOKEN_SECRET,
-                { expiresIn: "7d" }
-            )
+        const refreshToken = jwt.sign(
+            { email: foundUser.email },
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: "7d" }
+        )
 
-            let { _id, name, email } = foundUser;
+        let { _id, name } = foundUser;
 
-            foundUser.refreshToken = refreshToken;
-            foundUser.save()
+        foundUser.refreshToken = refreshToken;
+        foundUser.save()
 
-            res.cookie("jwt", refreshToken, { httpOnly: true, sameSite: "None", secure: true, maxAge: 7 * 24 * 60 * 60 * 1000 })
+        res.cookie("jwt", refreshToken, { httpOnly: true, sameSite: "None", secure: true, maxAge: 7 * 24 * 60 * 60 * 1000 })
 
-            res.status(200).send({ success: true, message: "logged in", userInfo: { _id, name, email, accessToken } })
-        }
-        else {
-            res.status(401).send({ success: false, message: "invaild email and password" })
-        }
+        res.status(200).send({ success: true, message: "logged in", userInfo: { _id, name, email, accessToken } })
     }
     catch (err) {
         res.status(500).send({ success: false, message: err.message })
@@ -87,21 +81,21 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
     try {
-        const cookies = req.cookies;
-        if (!cookies?.jwt) return res.status(200).send({ success: true, message: "your session already expired" })
+        const refreshToken = req.cookies?.jwt;
+        if (!refreshToken) return res.status(200).send({ success: true, message: "Your session is already expired." })
 
-        const refreshToken = cookies?.jwt
-        const foundUser = await userModel.findOne({ refreshToken: refreshToken })
+        const foundUser = await userModel.findOne({ refreshToken })
         if (!foundUser) {
             res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true })
-            return res.sendStatus(204)      //success:OK but no content
+            return res.status(200).send({ success: true, message: "Your session is already expired." });
+            //204 = success:OK but no content
         }
 
         foundUser.refreshToken = "",
             foundUser.save()
-        res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true })
-        res.status(200).send({ success: true, message: "you are logged out" })
 
+        res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+        res.status(200).send({ success: true, message: "You are logged out successfully." });
     }
     catch (err) {
         res.status(500).send({ success: false, message: err.message })

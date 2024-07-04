@@ -3,7 +3,6 @@ const allowedOrigins = require("./allowedOrigins");
 // Cross Origin Resource Sharing(CORS)
 const corsOptions = {
     origin: (origin, callback) => {
-        // remove "|| !origin" deployment time
         if (allowedOrigins?.indexOf(origin) !== -1) {
             callback(null, true)
         }

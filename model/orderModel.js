@@ -13,7 +13,7 @@ const orderSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    order: [{
+    items: [{
         product: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "products"
@@ -22,7 +22,10 @@ const orderSchema = mongoose.Schema({
             type: Number
         },
     }],
-    totalprice: {
+    totalItems: {
+        type: Number
+    },
+    totalPrice: {
         type: Number
     }
 }, { timestamps: true })

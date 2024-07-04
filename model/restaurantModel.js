@@ -52,6 +52,10 @@ const restaurantSchema = mongoose.Schema({
         required: true,
         type: String,
     },
+    isBlocked: {
+        type: Boolean,
+        default: false
+    },
     refreshToken: {
         type: String,
     }

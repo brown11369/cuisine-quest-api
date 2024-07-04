@@ -7,9 +7,11 @@ const dbConnect = require("./config/dbConnect")
 const cookieParser = require("cookie-parser");
 const credentails = require("./middlewares/credentails")
 const corsOptions = require("./config/corsOptions")
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 3000;
 
 // Connecting database
 dbConnect()
@@ -26,38 +28,39 @@ app.use(express.json())
 //middleware for cookies
 app.use(cookieParser())
 
-// app.use(express.static('public'));
+// Set security HTTP headers
+app.use(helmet());
+
+// Implement rate limiting for API endpoints
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
 
 
 const admin = require("./routes/adminRoute")
 const restaurant = require("./routes/restaurantRoute")
 const user = require("./routes/userRoute")
-
 const accessToken = require("./routes/accessTokenRoute")
-
 const product = require("./routes/productRoute")
 const cart = require("./routes/cartRoute")
 const order = require("./routes/orderRoute")
 const checkout = require("./routes/checkoutRoute")
 
-//  ------------------Routes------------------    //
 
 
 const router = express.Router();
 
-// Register routes
+//Routes
 router.use("/admin", admin)
 router.use("/restaurant", restaurant)
 router.use("/user", user)
-
 router.use("/access-token", accessToken)
-
 router.use("/product", product)
 router.use("/cart", cart)
-router.use("/order", order)
 router.use("/checkout", checkout)
-
-//  ------------------Routes------------------    //
+router.use("/order", order)
 
 
 // Mount the version "/api/v2" router
@@ -71,9 +74,16 @@ app.use("*", (req, res) => {
 
 
 
+// Error handling middleware
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+
 mongoose.connection.once("open", () => {
-    console.log("database connected")
+    console.log("Database connected");
     app.listen(PORT, () => {
-        console.log(`server up and running on port ${PORT}`)
-    })
-})
+        console.log(`Server up and running on port ${PORT}`);
+    });
+});
