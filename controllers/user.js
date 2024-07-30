@@ -48,11 +48,7 @@ const login = async (req, res) => {
         if (foundUser?.isBlocked) return res.status(401).send({ success: false, message: "You are blocked." });
 
         const accessToken = jwt.sign(
-            {
-                "userInfo": {
-                    "email": foundUser?.email,
-                },
-            },
+            { email: foundUser.email },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: "1m" }
         )
@@ -70,7 +66,7 @@ const login = async (req, res) => {
 
         res.cookie("jwt", refreshToken, { httpOnly: true, sameSite: "None", secure: true, maxAge: 7 * 24 * 60 * 60 * 1000 })
 
-        res.status(200).send({ success: true, message: "logged in", userInfo: { _id, name, email, accessToken } })
+        res.status(200).send({ success: true, message: "logged in", credential: { _id, name, email, accessToken } })
     }
     catch (err) {
         res.status(500).send({ success: false, message: err.message })

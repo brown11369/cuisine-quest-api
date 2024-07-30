@@ -1,5 +1,5 @@
 {
-  "name": "shokumo-api",
+  "name": "cuisine-quest-api",
   "version": "2.0.0",
   "description": "restaurant api",
   "main": "server.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brown11369/shokumo-api.git"
+    "url": "git+https://github.com/brown11369/cuisine-quest-api.git"
   },
   "keywords": [
     "reastaurant",
@@ -19,9 +19,9 @@
   "author": "brown",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/brown11369/shokumo-api/issues"
+    "url": "https://github.com/brown11369/cuisine-quest-api/issues"
   },
-  "homepage": "https://github.com/brown11369/shokumo-api#readme",
+  "homepage": "https://github.com/brown11369/cuisine-quest-api#readme",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",

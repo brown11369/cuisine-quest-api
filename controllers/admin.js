@@ -53,7 +53,7 @@ const handleLogin = async (req, res) => {
 
             const accessToken = jwt.sign(
                 {
-                    "userInfo": {
+                    "credential": {
                         "email": foundAdmin?.email,
                         "roles": roles
                     },
@@ -75,7 +75,7 @@ const handleLogin = async (req, res) => {
 
             res.cookie("jwt", refreshToken, { httpOnly: true, sameSite: "None", secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 })
 
-            res.status(200).send({ success: true, message: "logged in", userInfo: { _id, name, email, accessToken } })
+            res.status(200).send({ success: true, message: "logged in", credential: { _id, name, email, accessToken } })
         }
         else {
             res.status(401).send({ success: false, message: "invaild email and password" })

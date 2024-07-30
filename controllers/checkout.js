@@ -1,4 +1,4 @@
-const orderModel = require("../model/orderModel")
+const orderModel = require("../model/orderModel");
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 const checkoutController = async (req, res) => {
@@ -23,25 +23,23 @@ const checkoutController = async (req, res) => {
 
         const session = await stripe.checkout.sessions.create({
             mode: 'payment',
-            success_url: `${process.env.CLIENT_URL}/order?success=true`,
-            cancel_url: `${process.env.CLIENT_URL}/order?canceled=true`,
+            success_url: `${process.env.CLIENT_URL}/orders?success=true`,
+            cancel_url: `${process.env.CLIENT_URL}/orders?canceled=true`,
             line_items: lineitems,
             shipping_address_collection: { allowed_countries: ['US', 'IN'] },
             payment_method_types: ["card"],
-
         });
 
         await orderModel.create({
             user: orderData?.user,
             paymentInfo: session.id,
-            status: 3,
+            status: 3, // Assuming initial status is pending
             items: orderData?.items,
             totalItems: orderData?.totalItems,
             totalPrice: orderData?.totalPrice
-        })
-
+        });
+        console.log(session)
         res.json({ stripeSession: session })
-
     } catch (err) {
         console.error('Error in checkout controller:', err);
         res.status(500).json({ error: 'Internal server error' });

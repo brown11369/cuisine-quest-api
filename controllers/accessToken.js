@@ -34,19 +34,12 @@ const accessToken = async (req, res) => {
         (err, decoded) => {
             if (err || foundUser?.email !== decoded?.email) return res.sendStatus(401);     //decode?.email because it is not under userInfo
 
-            const roles = foundUser?.roles;
-
             const accessToken = jwt.sign(
-                {
-                    "userInfo": {
-                        "email": decoded?.email,
-                        "roles": roles
-                    },
-                },
+                { "email": decoded?.email },
                 process.env.ACCESS_TOKEN_SECRET,
                 { expiresIn: "1m" }
             );
-            res.send({ success: true, userInfo: { _id, name, email, accessToken } })
+            res.send({ success: true, credential: { _id, name, email, accessToken } })
         })
 }
 

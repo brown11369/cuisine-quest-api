@@ -12,6 +12,7 @@ const rateLimit = require("express-rate-limit");
 
 
 const PORT = process.env.PORT || 3000;
+const API_VERSION=process.env.API_VERSION
 
 // Connecting database
 dbConnect()
@@ -48,6 +49,8 @@ const cart = require("./routes/cartRoute")
 const order = require("./routes/orderRoute")
 const checkout = require("./routes/checkoutRoute")
 
+const stripeWebHook=require("./routes/stripeWebHook")
+
 
 
 const router = express.Router();
@@ -62,9 +65,14 @@ router.use("/cart", cart)
 router.use("/checkout", checkout)
 router.use("/order", order)
 
+router.use("/stripe-webhook",stripeWebHook)
+
+
+
+
 
 // Mount the version "/api/v2" router
-app.use("/api/v2", router);
+app.use(API_VERSION, router);
 
 
 // Handle 404 errors

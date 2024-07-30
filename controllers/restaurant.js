@@ -52,13 +52,9 @@ const login = async (req, res) => {
 
         if (passwordMatch) {
             const accessToken = jwt.sign(
-                {
-                    "restaurantInfo": {
-                        "email": foundRestaurant?.email,
-                    },
-                },
+                { email: foundRestaurant.email },
                 process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: "15m" }
+                { expiresIn: "1m" }
             )
 
             const refreshToken = jwt.sign(
@@ -74,7 +70,7 @@ const login = async (req, res) => {
 
             res.cookie("jwt", refreshToken, { httpOnly: true, sameSite: "None", secure: true, maxAge: 7 * 24 * 60 * 60 * 1000 })
 
-            res.status(200).send({ success: true, message: "logged in", userInfo: { _id, name, email, accessToken } })
+            res.status(200).send({ success: true, message: "logged in", credential: { _id, name, email, accessToken } })
         }
         else {
             res.status(401).send({ success: false, message: "invaild email and password" })

@@ -77,6 +77,7 @@ const allItems = async (req, res) => {
 
 const removeItem = async (req, res) => {
     try {
+        console.log(req.params.itemID)
         let itemID = req.params.itemID;
         let deletedItem = await cartItemModel.findByIdAndDelete(itemID);
 

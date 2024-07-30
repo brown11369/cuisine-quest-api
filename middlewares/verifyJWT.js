@@ -4,7 +4,6 @@ const verifyJWT = (req, res, next) => {
     try {
         const authHeader = req.headers.authorization || req.headers.Authorization
         if (!authHeader?.startsWith("Bearer ")) return res.sendStatus(401);
-        
         const cookies = req.cookies;
         if (!cookies?.jwt) return res.sendStatus(401);
 
@@ -24,9 +23,8 @@ const verifyJWT = (req, res, next) => {
             process.env.ACCESS_TOKEN_SECRET,
             (err, decoded) => {
                 if (err) return res.status(403).send({ success: false, message: "invalid key" })    //invalid token(Forbidden)  
-                if (validEmail !== decoded?.userInfo?.email) return res.status(403).send({ success: false, message: "invalid token." })
-                req.email = decoded?.userInfo?.email;
-                req.roles = decoded?.userInfo?.roles;
+                if (validEmail !== decoded?.email) return res.status(403).send({ success: false, message: "invalid token." })
+                req.email = decoded?.email;
                 next()
             })
     }
