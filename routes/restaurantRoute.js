@@ -35,7 +35,7 @@ router.get("/orders/:id", (req, res) => {
             }))
         })
         .catch((err) => {
-            console.log(err)
+            console.error(err)
             res.send({ success: false, message: "please try again later" })
         })
 })
@@ -47,7 +47,7 @@ router.get("/:id", (req, res) => {
             res.send(data)
         })
         .catch((err) => {
-            console.log(err)
+            console.error(err)
             res.send({ success: false, message: "please try again later" })
         })
 })

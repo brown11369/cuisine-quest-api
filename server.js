@@ -49,8 +49,6 @@ const cart = require("./routes/cartRoute")
 const order = require("./routes/orderRoute")
 const checkout = require("./routes/checkoutRoute")
 
-const stripeWebHook=require("./routes/stripeWebHook")
-
 
 
 const router = express.Router();
@@ -64,10 +62,6 @@ router.use("/product", product)
 router.use("/cart", cart)
 router.use("/checkout", checkout)
 router.use("/order", order)
-
-router.use("/stripe-webhook",stripeWebHook)
-
-
 
 
 

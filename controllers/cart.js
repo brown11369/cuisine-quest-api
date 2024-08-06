@@ -1,5 +1,4 @@
-const cartItemModel = require("../model/cartItemModel")
-
+const cartItemModel = require("../model/cartItemModel");
 
 const additem = async (req, res) => {
     try {
@@ -30,7 +29,6 @@ const additem = async (req, res) => {
 
 const manageQuantity = async (req, res) => {
     let cartItemID=req.params.id;
-    console.log(cartItemID)
     res.status(400).send({ success: false, message: "user and product are required" });
 
     // try {
@@ -77,7 +75,6 @@ const allItems = async (req, res) => {
 
 const removeItem = async (req, res) => {
     try {
-        console.log(req.params.itemID)
         let itemID = req.params.itemID;
         let deletedItem = await cartItemModel.findByIdAndDelete(itemID);
 
